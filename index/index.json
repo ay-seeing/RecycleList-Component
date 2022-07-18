@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "RecycleList": "../component/RecycleList/RecycleList"
+  },
+  "onReachBottomDistance": 100,
+  "enablePullDownRefresh": true,
+  "navigationStyle": "custom"
+}

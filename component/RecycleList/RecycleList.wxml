@@ -1,0 +1,26 @@
+<view class="RecycleList">
+  <view style="height:{{testBeforeHeight}}rpx;border: 1rpx solid #ccc;" class="scroll-before">
+    无限滚动组件内部，列表上面的元素
+    <slot name="scroll-outer-before"></slot>
+</view>
+  <view class="view-lists" id="{{recycleListContentId}}">
+    <view id="{{recycleListContentId}}-before">
+        <slot name="scroll-inner-before"></slot>
+    </view><!-- 无限滚动内容内部的元素高度需要单独计算 -->
+    <view class="item-page" data-index="{{pageI}}" wx:for="{{listData}}" wx:key="i" wx:for-index="pageI" style="height: {{(pageI < listData.length - 1 ? (turnPageHeight + 'px') : 'auto')}};">
+    <block wx:if="{{item}}">
+        <view class="item recycleList-item" wx:for="{{item}}" wx:key="index" wx:for-index="si">
+            <view class="img-box" data-ii="{{scrollPageNumber}}">
+                <view class="info">页码：{{item.entity.pageNumber}} - {{si}}</view>
+                <view class="" style="width: 300rpx;height:200rpx;background:#f0f0f0;"></view>
+            </view>
+        </view>
+    </block>
+    </view>
+  </view>
+  <!-- <view class="loading" wx:if="{{hasMore}}">加载中。。。</view> -->
+  <!-- <view class="fixed_bottom">
+    <view class="btn" bind:tap="beforeChangeHeight">改变高度</view>
+    <view class="btn" bind:tap="handlTest">获取</view>
+  </view> -->
+</view>

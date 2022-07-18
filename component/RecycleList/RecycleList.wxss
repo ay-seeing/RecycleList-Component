@@ -1,0 +1,44 @@
+.RecycleList{
+    position:relative;
+    /* padding:100rpx 0; */
+    /* height:100vh; */
+    box-sizing: border-box;
+  }
+  .heightItem{
+    position:absolute;
+    left:0;
+    top:0;
+    height:300rpx;
+    transform: translateX(-300rpx);
+  }
+  #test{
+    /* padding:100rpx; */
+  }
+  .item-page{
+    /* height:6000rpx; */
+  }
+  .item-page:last-child{
+    /* height:auto; */
+  }
+  .item{
+    border:1rpx solid #ccc;
+    padding:10rpx;
+    box-sizing:border-box;
+  }
+  .item .img{
+    width:300rpx;
+    height:150rpx;
+  }
+  .fixed_bottom{
+    position:fixed;
+    right:20rpx;
+    bottom:100rpx;
+    
+  }
+  .fixed_bottom .btn{
+    width:80rpx;
+    height:80rpx;
+    border:1rpx solid #ccc;
+    background:#f0f0f0;
+    margin-top:10rpx;
+  }

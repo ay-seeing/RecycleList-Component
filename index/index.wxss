@@ -1,0 +1,5 @@
+.page_before{
+  height:1000rpx;
+  padding:50rpx 0;
+  background:#f0f0f0;
+}
