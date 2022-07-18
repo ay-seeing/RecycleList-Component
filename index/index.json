@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "RecycleList": "../component/RecycleList/RecycleList"
+    "RecycleList": "../component/RecycleList/RecycleList",
+    "ItemProd": "../component/ItemProd/ItemProd"
   },
   "onReachBottomDistance": 100,
   "enablePullDownRefresh": true,

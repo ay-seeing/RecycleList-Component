@@ -1,0 +1,3 @@
+<view class="ItemProd">
+  <view>{{item.entity.pageNumber}}-{{item.index}}</view>
+</view>

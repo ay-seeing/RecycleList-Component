@@ -1,5 +1,8 @@
 {
     "component": true,
-    "usingComponents": {}
+    "usingComponents": {},
+    "componentGenerics": {
+      "ItemProd": true
+    }
   }
   

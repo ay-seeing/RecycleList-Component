@@ -25,10 +25,7 @@
     padding:10rpx;
     box-sizing:border-box;
   }
-  .item .img{
-    width:300rpx;
-    height:150rpx;
-  }
+ 
   .fixed_bottom{
     position:fixed;
     right:20rpx;
