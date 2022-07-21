@@ -2,7 +2,7 @@
  * @Author: yiyang 630999015@qq.com
  * @Date: 2022-07-18 10:49:45
  * @LastEditors: yiyang 630999015@qq.com
- * @LastEditTime: 2022-07-21 17:58:28
+ * @LastEditTime: 2022-07-21 20:34:50
  * @FilePath: /WeChatProjects/ComponentLongList/component/RecycleList/RecycleList.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -33,7 +33,9 @@ js： 在父组件的 onPageScroll 和 onReachBottom 事件里面分别调用组
 
 注意：
 1、一个页面只能使用一个无限滚动组件，否则会有问题。
-2、无限滚动内部需要无限展示的元素高度必须一致，所以不支持瀑布流
+2、不支持瀑布流
+3、如果要使用一行多个，最好是使用等高，如果不等高可能会有UI显示问题
+4、如果需要支持锚点，则必须是等高，否则没办法进行计算（目前还不支持锚点定位功能）
 
 
 
@@ -57,7 +59,11 @@ Component({
             type: String,
             value: 'recycleList-content'
         },
-        temp: null
+        hasContour: {   // 里面的每个item是否是等高的
+            type: Boolean,
+            value: true,
+        }
+        // temp: null
     },
     lifetimes: {
         // 组件初始化生命周期-组件初始化完成
@@ -107,7 +113,8 @@ Component({
             if (!this.data.hasMore || this.data.hasLoading) {
                 return;
             }
-            wx.getStorageSync('debug') && console.log('component----', '加载数据-ing', this.data._apiData.page.offset,this.data._apiData.page.limit)
+
+            wx.getStorageSync('debug') && console.log('component----', '加载数据-ing',)
             // console.log('this.data._apiData', this.data._apiData)
             let curentP = this.data._apiData.page.offset/this.data._apiData.page.limit;
             // 请求接口前设置loading状态
@@ -161,7 +168,9 @@ Component({
                 })
 
                 // 将数据存储起来
-                this.data._bakListData[this.data._currentPageNumber] = list;
+                this.data._bakListData[this.data._currentPageNumber] = {
+                    list,
+                }
                 // }
 
                 // 更新请求页码
@@ -170,6 +179,8 @@ Component({
                 
                 this.setData({
                     hasMore: true,
+                }, async ()=>{
+                    
                 });
 
                 // 根据不能动页码获取需要显示的数据
@@ -180,12 +191,21 @@ Component({
                 });
             }
         },
-        // 更具滚动页码获取需要显示数据
+        // 根据滚动页码获取需要显示数据
         getShowData(){
             let listData = []
-            // 根据页码获取当前页码前后1页的数据
-            listData.length = this.data._bakListData.length;
+            // 设置数据有多少页
+            // listData.length = this.data._bakListData.length;
+            // 将备份数据里面的存储dom高度的对象给 listData，用于后面渲染设置高度
+            this.data._bakListData.forEach((item, i)=>{
+                let {dom} = item;
+                listData[i] = {
+                    dom,
+                }
+            });
 
+
+            // 根据页码获取当前页码前后1页的数据，将对应页码的数据全部替换掉
             if(this.data.scrollPageNumber>=1){
                 listData[this.data.scrollPageNumber-1] = this.data._bakListData[this.data.scrollPageNumber-1];
             }
@@ -202,22 +222,72 @@ Component({
                 listData: listData,
                 // 计算对应某一页的高度
                 turnPageHeight: this.data._height ? this.data._height * (this.data._apiData.page.limit/ this.data.columnNumber) : 0,
-            }, ()=>{
+            }, async ()=>{
                 // 当未获取到高度的时候采取获取，如果已经获取到了就不需要再去获取高度了
-                !this.data._height && this.getItemHeight();
+                !this.data._height &&  await this.getItemHeight();
+
+                // 判断是否是不等高子元素，如果是不等高子元素，则需要获取page高度，那么每页的高度就不通过第一个item去计算得到了，这里就需要获取下上一页的高度
+                // console.log('this.data._currentPageNumber---', this.data._currentPageNumber, this.data._bakScrollPageNumber)
+                if(!this.data.hasContour){
+                    console.log('不等高')
+                    // if(this.data._currentPageNumber > 0){
+                    //     this.getPrevPageHeight(this.data._currentPageNumber-1);
+                    // }
+                    await this.getPrevPageHeight(this.data._currentPageNumber);
+                    // console.log('this.data._bakListData---', JSON.parse(JSON.stringify(this.data._bakListData)))
+                }else if(!this.data.turnPageHeight){
+                    console.log('等高')
+                    // this.setData({
+                    //     // 计算对应某一页的高度
+                    //     turnPageHeight: this.data._height ? this.data._height * (this.data._apiData.page.limit/ this.data.columnNumber) : 0,
+                    // });
+
+                    this.data._bakListData[this.data._currentPageNumber].dom ={
+                        height: this.data.turnPageHeight,
+                    }
+                }else{
+                    console.log('等高')
+                    // if(this.data._currentPageNumber > 0){
+                    //     this.data._bakListData[this.data._currentPageNumber -1].dom ={
+                    //         height: this.data.turnPageHeight,
+                    //     }
+                    // }
+                    // console.log('this.data._bakListData---',this.data.turnPageHeight, JSON.parse(JSON.stringify(this.data._bakListData)))
+                    this.data._bakListData[this.data._currentPageNumber].dom ={
+                        height: this.data.turnPageHeight,
+                    }
+                }
             }, 100)
         },
 
-        getItemHeight(){
+        // 获取单个元素的高度
+        async getItemHeight(){
             let self = this;
             var query = this.createSelectorQuery();
-
-            query.select('.recycleList-item').boundingClientRect(function (res2) {
-                self.data._height = res2.height;
-            }).exec();
-
+            await new Promise((rej, ec)=>{
+                query.select('.recycleList-item').boundingClientRect(function (res2) {
+                    self.data._height = res2.height;
+                    rej();
+                }).exec();
+            })
         },
 
+        // 获取上一页的高度
+        async getPrevPageHeight(pageN){
+            let self = this;
+            var query = this.createSelectorQuery();
+            // console.log('----', '.item-page-'+pageN)
+            await new Promise((rej, ec)=>{
+                query.select('.item-page-'+pageN).boundingClientRect(function (res2) {
+                    self.data._bakListData[pageN].dom = {
+                        height: res2.height,
+                    }
+                    rej();
+                }).exec();
+            })
+        },
+
+        // 获取滚动高度，来计算当前页码
         getPageScrollTop(){
             let self = this;
 
@@ -225,7 +295,20 @@ Component({
             query.select(`#${this.data.recycleListContentId}`).boundingClientRect(function (res) {
                 // console.log('self.data._diffHeight', self.data._diffHeight, self.data._showHeight, res.top)
                 // 根据页面显示区域的底部位置计算当前是多少页
-                let scrollP = Math.floor(Math.abs(res.top-self.data._showHeight+self.data._diffHeight)/self.data._height/(self.data._apiData.page.limit/self.data.columnNumber));
+                let scrollP = 0;
+                // 判断是否是等高，如果等高则直接计算，不等高则进行轮询，其实等高走轮询也行，为了优化性能，可以直接计算
+                if(self.data.hasContour){
+                    scrollP = Math.floor(Math.abs(res.top-self.data._showHeight+self.data._diffHeight)/self.data._height/(self.data._apiData.page.limit/self.data.columnNumber));
+                }else{
+                    let offsetTop = Math.abs(res.top-self.data._showHeight+self.data._diffHeight);
+                    self.data._bakListData.forEach((item, i)=>{
+                        if(item.dom && offsetTop >= 0){
+                            scrollP = i;
+                            offsetTop -= item.dom.height;
+                        }
+                    });
+                    // console.log('scrollP---', scrollP)
+                }
 
                 // 判断上一次的备份页码和现在计算出来的页码是否相同，如果相同就不做处理（目的优化性能）
                 if(self.data._bakScrollPageNumber === scrollP){

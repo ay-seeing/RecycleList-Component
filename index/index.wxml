@@ -1,6 +1,6 @@
 <view class="page-detail">
   <view class="page_before">组件外面元素</view>
-  <RecycleList id="my_recycle" columnNumber="{{1}}" recycleListContentId="recycleList-content2" generic:ItemProd="ItemProd">
+  <RecycleList id="my_recycle" generic:ItemProd="ItemProd" columnNumber="{{1}}" recycleListContentId="recycleList-content2" hasContour="{{false}}">
     <view slot="scroll-outer-before" class="">11111</view>
     <view slot="scroll-outer-after" class="">加载中。。。</view>
   </RecycleList>
