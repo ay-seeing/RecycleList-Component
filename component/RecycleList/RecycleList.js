@@ -2,7 +2,7 @@
  * @Author: yiyang 630999015@qq.com
  * @Date: 2022-07-18 10:49:45
  * @LastEditors: yiyang 630999015@qq.com
- * @LastEditTime: 2022-07-18 18:07:01
+ * @LastEditTime: 2022-07-21 17:41:14
  * @FilePath: /WeChatProjects/ComponentLongList/component/RecycleList/RecycleList.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -194,9 +194,10 @@ Component({
                 listData[this.data.scrollPageNumber+1] = this.data._bakListData[this.data.scrollPageNumber+1];
             }
 
-            // 将最近的5页数据显示出来
+            // 将最近的3页数据显示出来
             this.setData({
                 listData: listData,
+                // 计算对应某一页的高度
                 turnPageHeight: this.data._height ? this.data._height * (this.data._apiData.page.limit/ this.data.columnNumber) : 0,
             }, ()=>{
                 // 当未获取到高度的时候采取获取，如果已经获取到了就不需要再去获取高度了
@@ -221,7 +222,7 @@ Component({
             query.select(`#${this.data.recycleListContentId}`).boundingClientRect(function (res) {
                 // console.log('self.data._diffHeight', self.data._diffHeight, self.data._showHeight, res.top)
                 // 根据页面显示区域的底部位置计算当前是多少页
-                let scrollP = Math.floor(Math.abs(res.top-self.data._showHeight+self.data._diffHeight)/self.data._height/self.data._apiData.page.limit);
+                let scrollP = Math.floor(Math.abs(res.top-self.data._showHeight+self.data._diffHeight)/self.data._height/(self.data._apiData.page.limit/self.data.columnNumber));
 
                 // 判断上一次的备份页码和现在计算出来的页码是否相同，如果相同就不做处理（目的优化性能）
                 if(self.data._bakScrollPageNumber === scrollP){
