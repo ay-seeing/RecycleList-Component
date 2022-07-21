@@ -2,7 +2,7 @@
   <view style="height:{{testBeforeHeight}}rpx;border: 1rpx solid #ccc;" class="scroll-before">
     无限滚动组件内部，列表上面的元素
     <slot name="scroll-outer-before"></slot>
-</view>
+  </view>
   <view class="view-lists" id="{{recycleListContentId}}">
     <view id="{{recycleListContentId}}-before">
         <slot name="scroll-inner-before"></slot>
@@ -19,4 +19,5 @@
     </block>
     </view>
   </view>
+  <slot name="scroll-outer-after" wx:if="{{listData.length}}">加载中...</slot>
 </view>

@@ -2,7 +2,7 @@
  * @Author: yiyang 630999015@qq.com
  * @Date: 2022-07-18 10:49:45
  * @LastEditors: yiyang 630999015@qq.com
- * @LastEditTime: 2022-07-21 17:41:14
+ * @LastEditTime: 2022-07-21 17:58:28
  * @FilePath: /WeChatProjects/ComponentLongList/component/RecycleList/RecycleList.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -101,11 +101,13 @@ Component({
     methods: {
         // 获取圈子数据方法
         async getFeeds() {
+            wx.getStorageSync('debug') && console.log('component----', '加载数据-start')
             // 如果没有更多，则直接返回
             // 判断如果正在加载，则进行节流处理，不请求下一次的接口请求
             if (!this.data.hasMore || this.data.hasLoading) {
                 return;
             }
+            wx.getStorageSync('debug') && console.log('component----', '加载数据-ing', this.data._apiData.page.offset,this.data._apiData.page.limit)
             // console.log('this.data._apiData', this.data._apiData)
             let curentP = this.data._apiData.page.offset/this.data._apiData.page.limit;
             // 请求接口前设置loading状态
@@ -124,6 +126,7 @@ Component({
                     res();
                 }, 200)
             });
+            wx.getStorageSync('debug') && console.log('component----', '加载数据-end')
             
             // 请求接口
             let resp = {};

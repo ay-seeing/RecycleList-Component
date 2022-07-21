@@ -16,15 +16,15 @@
   }
   .item-page{
     /* height:6000rpx; */
-    display:flex;
-    flex-wrap: wrap;
+    /* display:flex;
+    flex-wrap: wrap; */
   }
   .item-page:last-child{
     /* height:auto; */
   }
   .item{
-    width:40%;
-    margin-left:10%;
+    /* width:40%;
+    margin-left:10%; */
     border:1rpx solid #ccc;
     padding:10rpx;
     box-sizing:border-box;
