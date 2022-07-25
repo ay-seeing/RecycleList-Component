@@ -29,17 +29,3 @@
     padding:10rpx;
     box-sizing:border-box;
   }
- 
-  .fixed_bottom{
-    position:fixed;
-    right:20rpx;
-    bottom:100rpx;
-    
-  }
-  .fixed_bottom .btn{
-    width:80rpx;
-    height:80rpx;
-    border:1rpx solid #ccc;
-    background:#f0f0f0;
-    margin-top:10rpx;
-  }

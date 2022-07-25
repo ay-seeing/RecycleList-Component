@@ -3,3 +3,11 @@
   padding:50rpx 0;
   background:#f0f0f0;
 }
+.c{
+  position:fixed;
+  right:20rpx;
+  bottom:20rpx;
+  padding:20rpx;
+  background:#fff;
+  border:2rpx solid #ccc;
+}

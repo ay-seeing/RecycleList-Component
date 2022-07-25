@@ -45,7 +45,9 @@ function throttle(fn, delay, immediate, debounce) {
 //Page d
 Page({
   data: {
-    
+    apiInfo: {
+      count: 60,
+    }
   },
 
   onLoad(options) {
@@ -81,6 +83,16 @@ Page({
     // 无限列表-获取组件并触发组件内触底加载函数， my_recycle 为组件id
     let myRecycle = this.selectComponent('#my_recycle');
     myRecycle.getFeeds();
+  },
+
+  changeApi(){
+    console.log(999)
+    this.setData({
+      apiInfo: {
+        ...this.apiInfo,
+        count: 30,
+      }
+    })
   },
 
   // handlTest(){
