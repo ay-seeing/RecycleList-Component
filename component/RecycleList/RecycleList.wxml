@@ -20,5 +20,7 @@
     </block>
     </view>
   </view>
-  <slot name="scroll-outer-after" wx:if="{{listData.length}}">加载中...</slot>
+  <view class="scroll-after">
+    <slot name="scroll-outer-after" wx:if="{{listData.length}}">加载中...</slot>
+  </view>
 </view>
