@@ -2,7 +2,7 @@
  * @Author: yiyang 630999015@qq.com
  * @Date: 2022-07-18 10:49:45
  * @LastEditors: yiyang 630999015@qq.com
- * @LastEditTime: 2022-07-25 17:18:08
+ * @LastEditTime: 2022-08-09 11:56:24
  * @FilePath: /WeChatProjects/ComponentLongList/component/RecycleList/RecycleList.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -296,7 +296,9 @@ Component({
             var query = this.createSelectorQuery();
             await new Promise((rej, ec)=>{
                 query.select('.recycleList-item').boundingClientRect(function (res2) {
-                    self.data._height = res2.height;
+                    if(res2){
+                        self.data._height = res2.height;
+                    }
                     rej();
                 }).exec();
             })
@@ -309,8 +311,10 @@ Component({
             // console.log('----', '.item-page-'+pageN)
             await new Promise((rej, ec)=>{
                 query.select('.item-page-'+pageN).boundingClientRect(function (res2) {
-                    self.data._bakListData[pageN].dom = {
-                        height: res2.height,
+                    if(res2){
+                        self.data._bakListData[pageN].dom = {
+                            height: res2.height,
+                        }
                     }
                     rej();
                 }).exec();
