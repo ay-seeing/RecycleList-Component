@@ -1,5 +1,8 @@
 .ItemProd{
+  padding:20rpx 0 0 20rpx;
+}
+.content{
   min-height:200rpx;
   background:#f0f0f0;
-  width:300rpx;
+  border:1rpx solid #ccc;
 }

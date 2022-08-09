@@ -2,7 +2,7 @@
  * @Author: yiyang 630999015@qq.com
  * @Date: 2022-07-18 10:49:45
  * @LastEditors: yiyang 630999015@qq.com
- * @LastEditTime: 2022-08-09 11:56:24
+ * @LastEditTime: 2022-08-09 15:46:00
  * @FilePath: /WeChatProjects/ComponentLongList/component/RecycleList/RecycleList.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -48,7 +48,7 @@ js： 在父组件的 onPageScroll 和 onReachBottom 事件里面分别调用组
 参数说明：
 apiInfo    必填, api请求的一些参数，因为接口的 url 是必填
 id    必填，组件的id，用于父组件调用组件内部方法
-columnNumber    选填，默认 1
+columnNumber    选填，默认 1，目前样式最多支持3个，如果更多，需要自己添加css样式
 hasContour    选填，默认 true
 recycleListContentId   选填，组件内交互id，随意填写
 
@@ -120,11 +120,12 @@ Component({
         _currentPageNumber:0,  // 最后一次请求接口的页码
         _showHeight: 0, // 可视区域高度
         _diffHeight: 0,  // 无限滚动列表内部，第一个元素前面距离滚动列表顶部距离
-        _apiData: { "limit": 30, "offset": 0 },
+        _apiData: { "limit": 30, "offset": 0 },   // 接口翻页参数
     },
     observers: {  // 数据变化监听
         'apiInfo': function(opt){
-            console.log('this.data._apiData--', opt)
+            // console.log('this.data._apiData--', opt)
+
             this.setData({
                 _apiData: {
                     ...this.data._apiData,
@@ -166,6 +167,16 @@ Component({
                 }, 200)
             });
             wx.getStorageSync('debug') && console.log('component----', '加载数据-end')
+
+            // const res = await app.$fetch({
+            // url: this.data.apiInfo.url,
+            // data: {
+            //     ...this.data.apiInfo.apiData,
+            //     pageParameter: JSON.stringify(this.data._apiData)
+            // },
+            // showLoading: true,
+            // });
+            // if (res.error_num === 0 ) {}
             
             // 请求接口
             let resp = {};

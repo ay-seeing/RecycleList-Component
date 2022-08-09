@@ -46,6 +46,8 @@ function throttle(fn, delay, immediate, debounce) {
 Page({
   data: {
     apiInfo: {
+      url: '', // 接口名称
+      apiData: {},// 其他参数
       count: 60,
     }
   },
