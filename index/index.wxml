@@ -1,11 +1,13 @@
 <view class="page-detail">
   <view class="page_before">组件外面元素</view>
   
-  <RecycleList id="my_recycle" generic:ItemProd="ItemProd" columnNumber="{{3}}" recycleListContentId="recycleList-content2" hasContour="{{false}}" apiInfo="{{apiInfo}}">
+  <RecycleList id="my_recycle" generic:ItemProd="ItemProd" columnNumber="{{3}}" recycleListContentId="recycleList-content2" hasContour="{{false}}" apiInfo="{{apiInfo}}" recycle-box-class="recycle-box">
     <view slot="scroll-outer-before" class="">11111</view>
-    <view slot="scroll-outer-after" class="">加载中。。。</view>
+    <view slot="scroll-outer-after" class="">底部内容</view>
   </RecycleList>
 </view>
+
+<view class="reseat" bind:tap="handleReset">重置</view>
 
 <template name="itemTemp">
     234

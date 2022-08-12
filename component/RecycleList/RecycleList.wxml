@@ -1,4 +1,4 @@
-<view class="RecycleList">
+<view class="RecycleList recycle-box-class">
   <view style="height:{{testBeforeHeight}}rpx;border: 1rpx solid #ccc;" class="scroll-before">
     无限滚动组件内部，列表上面的元素
     <slot name="scroll-outer-before"></slot>
@@ -7,14 +7,15 @@
     <view id="{{recycleListContentId}}-before">
         <slot name="scroll-inner-before"></slot>
     </view><!-- 无限滚动内容内部的元素高度需要单独计算 -->
-    <view class="item-page column-{{columnNumber}} item-page-{{pageI}}" data-index="{{pageI}}" wx:for="{{listData}}" wx:key="i" wx:for-index="pageI" data-dom="{{JSON.stringify(item.dom || '{}')}}" style="height: {{((item.dom && item.dom.height) ? (item.dom.height + 'px') : 'auto')}};">
+    <view class="item-page recycle-list-class column-{{columnNumber}} item-page-{{pageI}}" data-index="{{pageI}}" wx:for="{{listData}}" wx:key="i" wx:for-index="pageI" data-dom="{{JSON.stringify(item.dom || '{}')}}" style="height: {{((item.dom && item.dom.height) ? (item.dom.height + 'px') : 'auto')}};">
     <!-- <view class="item-page item-page-{{pageI}}" data-index="{{pageI}}" wx:for="{{listData}}" wx:key="i" wx:for-index="pageI" data-dom="{{JSON.stringify(item.dom || '{}')}}" style="height: {{(pageI < listData.length - 1 ? (turnPageHeight + 'px') : 'auto')}};"> -->
     <block wx:if="{{item}}">
-        <ItemProd class="item recycleList-item" wx:for="{{item.list}}" wx:key="index" wx:for-index="si" item="{{({...item, index: si, curentP: scrollPageNumber })}}" data-ii="{{scrollPageNumber}}"></ItemProd>
+        <ItemProd class="recycleList-item recycle-item-class" wx:for="{{item.list}}" wx:key="index" wx:for-index="si" item="{{({...item, index: si, curentP: scrollPageNumber })}}" data-ii="{{scrollPageNumber}}"></ItemProd>
     </block>
     </view>
   </view>
   <view class="scroll-after">
-    <slot name="scroll-outer-after" wx:if="{{listData.length}}">加载中...</slot>
+    <slot name="scroll-outer-after"></slot>
+    <view class="loadding" wx:if="{{listData.length}}">{{hasMore ? '加载中...' : '没有更多'}}</view>
   </view>
 </view>

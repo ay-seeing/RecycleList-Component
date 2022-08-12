@@ -14,9 +14,14 @@
   display:flex;
   flex-wrap: wrap;
 }
-.column-2 .item{
+.column-2 .recycleList-item{
   width:50%;
 }
-.column-3 .item{
+.column-3 .recycleList-item{
   width:33.333%;
+}
+
+.scroll-after .loadding{
+  padding: 10rpx 0;
+  text-align: center;
 }
