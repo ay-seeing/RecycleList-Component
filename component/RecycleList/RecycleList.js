@@ -2,7 +2,7 @@
  * @Author: yiyang 630999015@qq.com
  * @Date: 2022-07-18 10:49:45
  * @LastEditors: yiyang 630999015@qq.com
- * @LastEditTime: 2022-07-21 17:58:28
+ * @LastEditTime: 2022-08-12 10:04:33
  * @FilePath: /WeChatProjects/ComponentLongList/component/RecycleList/RecycleList.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -48,6 +48,7 @@ Component({
       multipleSlots: true, // 在组件定义时的选项中启用多slot支持
       pureDataPattern: /^_/, // 指定所有 _ 开头的数据字段为纯数据字段
     },
+    externalClasses: ['recycle-box-class', 'recycle-list-class', 'recycle-item-class'],  // 将父级的样式传给子组件使用
     properties: {
         columnNumber: { // 一行显示几个
             type: Number,

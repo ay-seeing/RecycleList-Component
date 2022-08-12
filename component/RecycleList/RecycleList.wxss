@@ -22,7 +22,7 @@
   .item-page:last-child{
     /* height:auto; */
   }
-  .item{
+  .recycleList-item{
     /* width:40%;
     margin-left:10%; */
     border:1rpx solid #ccc;
@@ -42,4 +42,8 @@
     border:1rpx solid #ccc;
     background:#f0f0f0;
     margin-top:10rpx;
+  }
+  .scroll-after .loadding{
+    padding: 10rpx 0;
+    text-align: center;
   }
