@@ -7,18 +7,15 @@
     <view id="{{recycleListContentId}}-before">
         <slot name="scroll-inner-before"></slot>
     </view><!-- 无限滚动内容内部的元素高度需要单独计算 -->
-    <view class="item-page recycle-list-class" data-index="{{pageI}}" wx:for="{{listData}}" wx:key="i" wx:for-index="pageI" style="height: {{(pageI < listData.length - 1 ? (turnPageHeight + 'px') : 'auto')}};">
+    <view class="item-page recycle-list-class column-{{columnNumber}} item-page-{{pageI}}" data-index="{{pageI}}" wx:for="{{listData}}" wx:key="i" wx:for-index="pageI" data-dom="{{JSON.stringify(item.dom || '{}')}}" style="height: {{((item.dom && item.dom.height) ? (item.dom.height + 'px') : 'auto')}};">
+    <!-- <view class="item-page item-page-{{pageI}}" data-index="{{pageI}}" wx:for="{{listData}}" wx:key="i" wx:for-index="pageI" data-dom="{{JSON.stringify(item.dom || '{}')}}" style="height: {{(pageI < listData.length - 1 ? (turnPageHeight + 'px') : 'auto')}};"> -->
     <block wx:if="{{item}}">
-        <view class="recycleList-item recycle-item-class" wx:for="{{item}}" wx:key="index" wx:for-index="si">
-            <ItemProd item="{{({...item, index: si, curentP: scrollPageNumber })}}" data-ii="{{scrollPageNumber}}"></ItemProd>
-            <!-- <view class="img-box" data-ii="{{scrollPageNumber}}">
-                <view class="info">页码：{{item.entity.pageNumber}} - {{si}}</view>
-                <view class="" style="width: 300rpx;height:200rpx;background:#f0f0f0;"></view>
-            </view> -->
-        </view>
+        <ItemProd class="recycleList-item recycle-item-class" wx:for="{{item.list}}" wx:key="index" wx:for-index="si" item="{{({...item, index: si, curentP: scrollPageNumber })}}" data-ii="{{scrollPageNumber}}"></ItemProd>
     </block>
     </view>
   </view>
-  <slot name="scroll-outer-after"></slot>
-  <view class="loadding" wx:if="{{listData.length}}">{{hasMore ? '加载中...' : '没有更多'}}</view>
+  <view class="scroll-after">
+    <slot name="scroll-outer-after"></slot>
+    <view class="loadding" wx:if="{{listData.length}}">{{hasMore ? '加载中...' : '没有更多'}}</view>
+  </view>
 </view>

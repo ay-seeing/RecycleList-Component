@@ -1,4 +1,6 @@
 <view class="ItemProd">
-  <view>当前页面：{{item.curentP}}</view>
-  <view>{{item.entity.pageNumber}}-{{item.index}}</view>
+  <view class="content">
+    <view>当前页面：{{item.curentP}}</view>
+    <view>{{item.pageNumber}}-{{item.index}}</view>
+  </view>
 </view>

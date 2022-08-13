@@ -45,7 +45,11 @@ function throttle(fn, delay, immediate, debounce) {
 //Page d
 Page({
   data: {
-    
+    apiInfo: {
+      url: '', // 接口名称
+      apiData: {},// 其他参数
+      count: 60,
+    }
   },
 
   onLoad(options) {
@@ -80,7 +84,23 @@ Page({
     wx.getStorageSync('debug') && console.log('page----', '触底')
     // 无限列表-获取组件并触发组件内触底加载函数， my_recycle 为组件id
     let myRecycle = this.selectComponent('#my_recycle');
-    myRecycle.getFeeds();
+    myRecycle.getDatas();
+  },
+
+  changeApi(){
+    console.log(999)
+    this.setData({
+      apiInfo: {
+        ...this.apiInfo,
+        count: 30,
+      }
+    })
+  },
+
+  handleReset(){
+    // 这个方法只是测试组件重置，可以不需要
+    let myRecycle = this.selectComponent('#my_recycle');
+    myRecycle.init();
   },
 
   // handlTest(){
