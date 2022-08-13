@@ -2,7 +2,7 @@
  * @Author: yiyang 630999015@qq.com
  * @Date: 2022-07-18 10:49:45
  * @LastEditors: yiyang 630999015@qq.com
- * @LastEditTime: 2022-08-13 10:16:38
+ * @LastEditTime: 2022-08-13 11:23:03
  * @FilePath: /WeChatProjects/ComponentLongList/component/RecycleList/RecycleList.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -68,7 +68,7 @@ Component({
             type: Boolean,
             value:true,
         },
-        apiInfo: {   // api相关信息
+        apiInfo: {   // 必传，api相关信息
             type: Object,
             value: {
                 url: '',
@@ -103,8 +103,8 @@ Component({
                 fail: ()=>{}
             });
         
-            // 获取数据
-            this.getDatas();
+            // 获取数据,监听传入参数的时候已经调用了，所以这里不需要再调用了
+            // this.getDatas();
         }
     },
     data: {
@@ -117,6 +117,7 @@ Component({
         // testBeforeHeight: 1000,  // 用于测试，无限滚动前面的元素高度
 
         // 以下为纯数据字段
+        _hasUsedFirstInitData: false,  // 第一次传入的数据是否已经使用过
         _bakScrollPageNumber: 0,   // 上一次的页码，主要是用来对比页码是否改变更换数据
         _height: 0,   // 第一个子模块的高度
         _bakListData: [],  // 数据备份
@@ -152,14 +153,15 @@ Component({
         // 初始化
         init(){
             // 以下为纯数据字段
-            this.data._bakScrollPageNumber = 0,   // 上一次的页码，主要是用来对比页码是否改变更换数据
-            this.data._bakListData = [],  // 数据备份
-            this.data._currentPageNumber =0,  // 最后一次请求接口的页码
-            this.data._diffHeight = 0,  // 无限滚动列表内部，第一个元素前面距离滚动列表顶部距离
+            this.data._bakScrollPageNumber = 0;   // 上一次的页码，主要是用来对比页码是否改变更换数据
+            this.data._bakListData = [];  // 数据备份
+            this.data._currentPageNumber =0;  // 最后一次请求接口的页码
+            this.data._diffHeight = 0;  // 无限滚动列表内部，第一个元素前面距离滚动列表顶部距离
             this.data._apiData = {
                 ...this.data._apiData,
                 offset: 0,
-            } || { "limit": 30, "offset": 0 },
+            } || { "limit": 30, "offset": 0 };
+            this.data._hasUsedFirstInitData = false;   // 传入的初始化数据标识为未使用
 
             // 以下是需要渲染的数据
             this.setData({
@@ -175,7 +177,7 @@ Component({
         // 获取数据方法
         async getDatas() {
             wx.getStorageSync('debug') && console.log('component----', '加载数据-start')
-            let {initList, hasMore, hasLoading, apiInfo, _apiData, _hasMock} = this.data;
+            let {initList, hasMore, hasLoading, apiInfo, _apiData, _hasMock, _hasUsedFirstInitData} = this.data;
 
             // hasFirstPageData 是否传入了第一页的list数据，默认false，如果有传入则设置为true
             let hasFirstPageData = false;
@@ -184,7 +186,7 @@ Component({
             }
             // 如果没有更多，则直接返回
             // 判断如果正在加载，则进行节流处理，不请求下一次的接口请求
-            if ((!hasFirstPageData && !hasMore) || hasLoading) {
+            if (((!hasFirstPageData || _hasUsedFirstInitData) && !hasMore )|| hasLoading) {
                 return;
             }
 
@@ -194,8 +196,9 @@ Component({
             
             // 请求接口
             let list = [];
-            if(hasFirstPageData){
+            if(hasFirstPageData && !_hasUsedFirstInitData){
                 list = initList;
+                this.data._hasUsedFirstInitData = true;
             } else {
                 // 请求接口前设置loading状态
                 this.setData({
