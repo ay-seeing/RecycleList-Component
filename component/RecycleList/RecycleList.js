@@ -2,7 +2,7 @@
  * @Author: yiyang 630999015@qq.com
  * @Date: 2022-07-18 10:49:45
  * @LastEditors: yiyang 630999015@qq.com
- * @LastEditTime: 2022-08-13 11:23:03
+ * @LastEditTime: 2022-08-15 15:53:55
  * @FilePath: /WeChatProjects/ComponentLongList/component/RecycleList/RecycleList.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -127,6 +127,7 @@ Component({
         _apiData: { "limit": 30, "offset": 0 },   // 接口翻页参数
 
         _hasMock: true,  // 是否mock，开发时这里个字段要改成false
+        _hasMoreMark: true,   // 接口请求完成后，设置 hasMore之前存存接口返回的 hasMore字段，等到需要渲染的数据渲染后再设置 hasMore字段，解决最后一页先看到没有更多文案，后渲染数据的显示问题
     },
     observers: {  // 数据变化监听
         'apiInfo': function(opt){
@@ -216,6 +217,10 @@ Component({
                     });
                     list.length=_apiData.limit;
                     list.fill({});
+
+                    if(curentP >= Math.ceil(Math.random()*10 + 10)){
+                        this.data._hasMoreMark = false;
+                    }
                 }else{
                     
                     let resp = await app.$fetch({
@@ -234,11 +239,14 @@ Component({
                     let { content } = resp;
                     if (resp.error_num === 0 && content) {
                         list = content.list;
-                        this.setData({
-                            hasMore: content.hasMore,
-                        }, async ()=>{
+
+                        this.data._hasMoreMark = content.hasMore;
+
+                        // this.setData({
+                        //     hasMore: content.hasMore,
+                        // }, async ()=>{
                             
-                        });
+                        // });
                     }else{
                         // 错误提示
                         this.setData({
@@ -268,11 +276,11 @@ Component({
             this.data._apiData.offset += this.data._apiData.limit;
 
             
-            this.setData({
-                hasMore: true,
-            }, async ()=>{
+            // this.setData({
+            //     hasMore: true,
+            // }, async ()=>{
                 
-            });
+            // });
 
             // 根据不能动页码获取需要显示的数据
             this.getShowData();
@@ -344,7 +352,11 @@ Component({
                         height: this.data.turnPageHeight,
                     }
                 }
-            }, 100)
+
+                this.setData({
+                    hasMore: this.data._hasMoreMark,
+                });
+            })
         },
 
         // 获取单个元素的高度
