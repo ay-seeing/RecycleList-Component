@@ -2,7 +2,7 @@
  * @Author: yiyang 630999015@qq.com
  * @Date: 2022-07-18 10:49:45
  * @LastEditors: yiyang 630999015@qq.com
- * @LastEditTime: 2022-08-13 11:23:03
+ * @LastEditTime: 2022-08-15 17:44:20
  * @FilePath: /WeChatProjects/ComponentLongList/component/RecycleList/RecycleList.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -80,6 +80,14 @@ Component({
             type: Number,
             value: 1
         },
+        dataKey: {   // 获取接口里面list数据的字段，最多支持两层，如： 'info.prducts' 获取接口content字段下info字段里面的prducts字段作为渲染list的数据
+            type: String,
+            value: 'list'
+        },
+        moreKey: {   // 是否有更多字段
+            type: String,
+            value: 'hasMore',
+        },
         recycleListContentId: { // 无限列表id
             type: String,
             value: 'recycleList-content'
@@ -127,6 +135,7 @@ Component({
         _apiData: { "limit": 30, "offset": 0 },   // 接口翻页参数
 
         _hasMock: true,  // 是否mock，开发时这里个字段要改成false
+        _hasMoreMark: true,   // 接口请求完成后，设置 hasMore之前存存接口返回的 hasMore字段，等到需要渲染的数据渲染后再设置 hasMore字段，解决最后一页先看到没有更多文案，后渲染数据的显示问题
     },
     observers: {  // 数据变化监听
         'apiInfo': function(opt){
@@ -140,11 +149,11 @@ Component({
                 this.init();
             })
         },
-        'initHasMore': function(newVal){
-            this.setData({
-                hasMore: newVal,
-            });
-        },
+        // 'initHasMore': function(newVal){
+        //     this.setData({
+        //         hasMore: newVal,
+        //     });
+        // },
     },
     /**
      * 组件的方法列表
@@ -177,7 +186,7 @@ Component({
         // 获取数据方法
         async getDatas() {
             wx.getStorageSync('debug') && console.log('component----', '加载数据-start')
-            let {initList, hasMore, hasLoading, apiInfo, _apiData, _hasMock, _hasUsedFirstInitData} = this.data;
+            let {initList, hasMore, hasLoading, apiInfo, _apiData, _hasMock, _hasUsedFirstInitData, dataKey, moreKey, listData, initHasMore} = this.data;
 
             // hasFirstPageData 是否传入了第一页的list数据，默认false，如果有传入则设置为true
             let hasFirstPageData = false;
@@ -199,6 +208,9 @@ Component({
             if(hasFirstPageData && !_hasUsedFirstInitData){
                 list = initList;
                 this.data._hasUsedFirstInitData = true;
+                this.setData({
+                    hasMore: initHasMore,
+                });
             } else {
                 // 请求接口前设置loading状态
                 this.setData({
@@ -216,6 +228,10 @@ Component({
                     });
                     list.length=_apiData.limit;
                     list.fill({});
+
+                    if(curentP >= Math.ceil(Math.random()*10 + 10)){
+                        this.data._hasMoreMark = false;
+                    }
                 }else{
                     
                     let resp = await app.$fetch({
@@ -224,7 +240,7 @@ Component({
                             ...apiInfo.apiData,
                             pageParameter: JSON.stringify(_apiData)
                         },
-                        // showLoading: true,
+                        showLoading: !hasFirstPageData && listData.length === 0,
                     });
                     wx.getStorageSync('debug') && console.log('component----', '加载数据-end')
                     this.setData({
@@ -233,12 +249,24 @@ Component({
 
                     let { content } = resp;
                     if (resp.error_num === 0 && content) {
-                        list = content.list;
-                        this.setData({
-                            hasMore: content.hasMore,
-                        }, async ()=>{
+                        let listMore = true;
+                        let keyArr = dataKey.split('.');
+                        if(keyArr[1]){
+                            list = content[keyArr[0]][keyArr[1]] || [];
+                            listMore = content[keyArr[0]][moreKey];
+                        }else{
+                            list = content[keyArr[0]] || [];
+                            listMore = content[moreKey];
+                        }
+
+                        // 标记是否还有更多，这渲染完数据后渲染是否有更多
+                        this.data._hasMoreMark = listMore;
+
+                        // this.setData({
+                        //     hasMore: content.hasMore,
+                        // }, async ()=>{
                             
-                        });
+                        // });
                     }else{
                         // 错误提示
                         this.setData({
@@ -268,11 +296,11 @@ Component({
             this.data._apiData.offset += this.data._apiData.limit;
 
             
-            this.setData({
-                hasMore: true,
-            }, async ()=>{
+            // this.setData({
+            //     hasMore: true,
+            // }, async ()=>{
                 
-            });
+            // });
 
             // 根据不能动页码获取需要显示的数据
             this.getShowData();
@@ -344,7 +372,11 @@ Component({
                         height: this.data.turnPageHeight,
                     }
                 }
-            }, 100)
+
+                this.setData({
+                    hasMore: this.data._hasMoreMark,
+                });
+            })
         },
 
         // 获取单个元素的高度
